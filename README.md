@@ -11,25 +11,7 @@ Este script Python permite editar as faixas de arquivos MKV, alterando os títul
 
 1. Faça o download deste repositório em seu sistema.
 2. Certifique-se de que o Python 3.x esteja instalado em sua máquina.
-3. Instale as dependências executando o seguinte comando no terminal:
-   ```
-   pip install -r requirements.txt
-   ```
-4. Certifique-se de que as ferramentas `mkvmerge` e `mkvpropedit` estejam instaladas e acessíveis pelo caminho (PATH) do sistema.
-
-## Uso
-
-Execute o script fornecendo o diretório que contém os arquivos MKV que deseja editar:
-
-```
-python script.py <diretório>
-```
-
-Exemplo:
-
-```
-python script.py /caminho/para/diretório
-```
+3. Certifique-se de que as ferramentas `mkvmerge` e `mkvpropedit` estejam instaladas e acessíveis pelo caminho (PATH) do sistema.
 
 O script irá percorrer recursivamente o diretório especificado e localizar todos os arquivos MKV. Em seguida, ele criará arquivos JSON usando o `mkvmerge` para extrair informações sobre as faixas de áudio e legenda dos arquivos MKV. As informações extraídas serão salvas na pasta "temp" dentro do diretório do script.
 
@@ -39,7 +21,7 @@ O progresso e os resultados das edições serão exibidos no console.
 
 ## Estrutura do Projeto
 
-- `script.py`: O script principal que executa as ações de edição.
+- `TrackRename.py`: O script principal que executa as ações de edição.
 - `temp/`: Pasta temporária onde os arquivos JSON e informações auxiliares são armazenados.
 
 ## Observações
