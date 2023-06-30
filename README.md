@@ -9,7 +9,7 @@ Este script Python permite editar as faixas de arquivos MKV, alterando os títul
 
 ## Instalação
 
-1. Clone ou faça o download deste repositório em seu sistema.
+1. Faça o download deste repositório em seu sistema.
 2. Certifique-se de que o Python 3.x esteja instalado em sua máquina.
 3. Instale as dependências executando o seguinte comando no terminal:
    ```
