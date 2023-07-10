@@ -45,14 +45,20 @@ def identify_tracks(mkvmerge_files):
         tracks = content.get("tracks", [])
 
         audio_and_subtitle_info = [
-            (t["type"], t["properties"]["language_ietf"], t["properties"].get("forced_track", False))
+            {
+                "type": t["type"],
+                "language": t["properties"]["language_ietf"],
+                "forced": t["properties"].get("forced_track", False),
+                "flag_hearing_impaired": t["properties"].get("flag_hearing_impaired", False)
+            }
             for t in tracks if t["type"] in ["audio", "subtitles"]
         ]
 
         track_info[mkvmerge_file] = {
-            "track_types": [t for t, _, _ in audio_and_subtitle_info],
-            "languages": [l for _, l, _ in audio_and_subtitle_info],
-            "forced": ["1" if f else "0" for _, _, f in audio_and_subtitle_info]
+            "track_types": [t["type"] for t in audio_and_subtitle_info],
+            "languages": [t["language"] for t in audio_and_subtitle_info],
+            "forced": ["1" if t["forced"] else "0" for t in audio_and_subtitle_info],
+            "flag_hearing_impaired": ["1" if t["flag_hearing_impaired"] else "0" for t in audio_and_subtitle_info]
         }
 
     # Salva as informações extraídas em um arquivo JSON na pasta "temp"
@@ -62,6 +68,8 @@ def identify_tracks(mkvmerge_files):
 
     return track_info
 
+
+
 def edit_mkv_files(mkv_files):
     # Carrega as informações do arquivo JSON na pasta "temp"
     track_info_file = os.path.join(temp_dir, "track_info.json")
@@ -70,7 +78,7 @@ def edit_mkv_files(mkv_files):
 
     language_codes = {
         "en": "English",
-        "en-US": "English (US)",
+        "en-US": "English (United States)",
         "pt": "Português",
         "pt-BR": "Português (Brasil)",
         "pt-PT": "Português (Portugal)",
@@ -80,14 +88,15 @@ def edit_mkv_files(mkv_files):
         "es-CO": "Español (Colombia)",
         "ar": "العربية",
         "ar-001": "العربية",
+        "ar-EG": "العربية (مصر)",
         "cs": "Čeština",
-        "cs-CZ": "Čeština",
+        "cs-CZ": "Čeština (Česká republika)",
         "da": "Dansk",
-        "da-DK": "Dansk",
+        "da-DK": "Dansk (Danmark)",
         "de": "Deutsch",
-        "de-DE": "Deutsch",
+        "de-DE": "Deutsch (Deutschland)",
         "el": "Ελληνικά",
-        "el-GR": "Ελληνικά",
+        "el-GR": "Ελληνικά (Ελλάδα)",
         "fi": "Suomi",
         "fi-FI": "Suomi",
         "fil": "Filipino",
@@ -112,7 +121,7 @@ def edit_mkv_files(mkv_files):
         "ml": "മലയാളം",
         "ms": "Bahasa Melayu",
         "ms-MY": "Bahasa Melayu",
-        "nb": "Norsk (bokmål)",
+        "nb": "Norsk",
         "nb-NO": "Norsk (bokmål)",
         "nl": "Nederlands",
         "nl-NL": "Nederlands",
@@ -121,7 +130,7 @@ def edit_mkv_files(mkv_files):
         "ro": "Română",
         "ro-RO": "Română (România)",
         "ru": "русский",
-        "ru-RU": "русский ",
+        "ru-RU": "русский (Россия)",
         "sv": "Svenska",
         "sv-SE": "Svenska",
         "ta-IN": "தமிழ் (இந்தியா)",
@@ -148,23 +157,29 @@ def edit_mkv_files(mkv_files):
 
         languages = info.get("languages", [])
         forced = info.get("forced", [])
+        flag_hearing_impaired = info.get("flag_hearing_impaired", [])  # Novo campo adicionado
 
         # Comece a iterar a partir da segunda faixa (índice 1)
-        for i, (language, is_forced) in enumerate(zip(languages, forced), start=1):
+        for i, (language, is_forced, is_hearing_impaired) in enumerate(zip(languages, forced, flag_hearing_impaired), start=1):
             if language not in language_codes:
                 continue
 
-            new_title = language_codes[language]
+            language_title = language_codes.get(language, language)  # Obter o título do idioma com base no language_codes
             if is_forced == "1":
-                new_title = "Forced"
+                language_title = "Forced"
+            if is_hearing_impaired == "1":  # Verifica se é uma faixa "hearing impaired"
+                language_title += " [SDH]"  # Adiciona o termo " [SDH]" ao título do idioma
 
-            command = ["mkvpropedit", mkv_file, f"--edit", f"track:{i+1}", f"--set", f"name={new_title}"]
+            command = ["mkvpropedit", mkv_file, f"--edit", f"track:{i+1}", f"--set", f"name={language_title}"]
             result = subprocess.run(command)
 
             if result.returncode == 0:
                 print(f"Alterações em {mkv_file} com sucesso.")
             else:
                 print(f"Ocorreu um erro ao processar o {mkv_file}.")
+
+
+
 
 if __name__ == "__main__":
     directory = input("Por favor, insira o caminho do diretório que contém os arquivos MKV para serem analisados: ")
