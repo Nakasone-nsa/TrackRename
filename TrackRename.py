@@ -166,7 +166,7 @@ def edit_mkv_files(mkv_files):
 
             language_title = language_codes.get(language, language)  # Obter o título do idioma com base no language_codes
             if is_forced == "1":
-                language_title = "Forced"
+                language_title += " [FORCED]"
             if is_hearing_impaired == "1":  # Verifica se é uma faixa "hearing impaired"
                 language_title += " [SDH]"  # Adiciona o termo " [SDH]" ao título do idioma
 
