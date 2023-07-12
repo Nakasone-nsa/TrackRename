@@ -2,7 +2,8 @@
 
 This Python script allows you to analyze and edit MKV (Matroska Video) files. It performs various operations on MKV files, such as extracting track information and modifying track names based on language, forced status, and hearing impairment flag. Additionally, it removes the encoding date from the MKV files.
 
-https://github.com/Nakasone-nsa/TrackRename/assets/137841760/8509a9c4-4f78-4e88-baa4-e31d2ff3d093
+![beforeafter_rcFCvYIw_1](https://github.com/Nakasone-nsa/TrackRename/assets/137841760/95e3f7e4-b47c-48d7-b984-380835d9b3cb)
+
 
 ## Prerequisites
 Before using this script, make sure you have the following requirements:
