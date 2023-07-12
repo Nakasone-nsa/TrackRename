@@ -2,6 +2,10 @@
 
 Este script Python permite editar as faixas de arquivos MKV, alterando os títulos das faixas com base nas informações de idioma fornecidas. Ele utiliza as ferramentas `mkvmerge` e `mkvpropedit` para realizar as alterações nos arquivos MKV.
 
+
+https://github.com/Nakasone-nsa/TrackRename/assets/137841760/8509a9c4-4f78-4e88-baa4-e31d2ff3d093
+
+
 ## Requisitos
 
 - Python 3.x
