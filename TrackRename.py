@@ -1,17 +1,19 @@
-# Author: Paul M. Nakasone
-# Descrição: Este script permite editar as faixas de arquivos MKV, alterando os títulos das faixas com base nas informações de idioma fornecidas. Ele utiliza as ferramentas mkvmerge e mkvpropedit para realizar as alterações nos arquivos MKV.
+# Author: Nakasone
+# Description: This Python code performs analysis and editing operations on MKV (Matroska Video) files. It prompts the user to enter the path to a directory containing MKV files.
 
 import os
 import subprocess
 import sys
-import re
 import json
 
-# Crie a pasta "temp" se ela não existir
-temp_dir = "temp"
-if not os.path.exists(temp_dir):
-    os.makedirs(temp_dir)
-    
+TEMP_DIR = "temp"
+
+
+def create_temp_directory():
+    if not os.path.exists(TEMP_DIR):
+        os.makedirs(TEMP_DIR)
+
+
 def get_mkv_files(directory):
     mkv_files = []
     for root, _, files in os.walk(directory):
@@ -20,20 +22,22 @@ def get_mkv_files(directory):
                 mkv_files.append(os.path.join(root, file))
     return mkv_files
 
+
 def create_mkvmerge_files(mkv_files):
     mkvmerge_files = []
     for mkv_file in mkv_files:
-        json_file = os.path.join(temp_dir, os.path.splitext(os.path.basename(mkv_file))[0] + ".json")
+        json_file = os.path.join(TEMP_DIR, os.path.splitext(os.path.basename(mkv_file))[0] + ".json")
         command = ["mkvmerge", "-J", mkv_file]
         with open(json_file, "w", encoding="utf-8") as f:
             result = subprocess.run(command, stdout=f, text=True)
 
         if result.returncode == 0:
             mkvmerge_files.append(json_file)
-            print(f"Arquivo mkvmerge JSON criado para {mkv_file}")
+            print(f"Created mkvmerge JSON file for {mkv_file}")
         else:
-            print(f"Erro ao gerar o arquivo mkvmerge JSON para {mkv_file}")
+            print(f"Failed to generate mkvmerge JSON file for {mkv_file}")
     return mkvmerge_files
+
 
 def identify_tracks(mkvmerge_files):
     track_info = {}
@@ -61,18 +65,15 @@ def identify_tracks(mkvmerge_files):
             "flag_hearing_impaired": ["1" if t["flag_hearing_impaired"] else "0" for t in audio_and_subtitle_info]
         }
 
-    # Salva as informações extraídas em um arquivo JSON na pasta "temp"
-    track_info_file = os.path.join(temp_dir, "track_info.json")
+    track_info_file = os.path.join(TEMP_DIR, "track_info.json")
     with open(track_info_file, "w", encoding="utf-8") as f:
         json.dump(track_info, f, ensure_ascii=False, indent=4)
 
     return track_info
 
 
-
 def edit_mkv_files(mkv_files):
-    # Carrega as informações do arquivo JSON na pasta "temp"
-    track_info_file = os.path.join(temp_dir, "track_info.json")
+    track_info_file = os.path.join(TEMP_DIR, "track_info.json")
     with open(track_info_file, "r", encoding="utf-8") as f:
         track_info = json.load(f)
 
@@ -121,7 +122,7 @@ def edit_mkv_files(mkv_files):
         "ml": "മലയാളം",
         "ms": "Bahasa Melayu",
         "ms-MY": "Bahasa Melayu",
-        "nb": "Norsk",
+        "no": "Norsk",
         "nb-NO": "Norsk (bokmål)",
         "nl": "Nederlands",
         "nl-NL": "Nederlands",
@@ -133,6 +134,7 @@ def edit_mkv_files(mkv_files):
         "ru-RU": "русский (Россия)",
         "sv": "Svenska",
         "sv-SE": "Svenska",
+        "sk": "Slovenčina",
         "ta-IN": "தமிழ் (இந்தியா)",
         "te-IN": "తెలుగు (భారత దేశం)",
         "th": "ไทย",
@@ -148,46 +150,56 @@ def edit_mkv_files(mkv_files):
         "zh-HK": "中文(香港特別行政區)",
         "zh-Hans": "中文(简体)",
         "zh-Hant": "中文(繁體)",
-        # Adicione outros códigos de idioma aqui
+        # Add other language codes here
     }
 
     for mkv_file in mkv_files:
-        mkvmerge_file = os.path.join(temp_dir, os.path.splitext(os.path.basename(mkv_file))[0] + ".json")
+        mkvmerge_file = os.path.join(TEMP_DIR, os.path.splitext(os.path.basename(mkv_file))[0] + ".json")
         info = track_info.get(mkvmerge_file, {})
 
         languages = info.get("languages", [])
         forced = info.get("forced", [])
-        flag_hearing_impaired = info.get("flag_hearing_impaired", [])  # Novo campo adicionado
+        flag_hearing_impaired = info.get("flag_hearing_impaired", [])
 
-        # Comece a iterar a partir da segunda faixa (índice 1)
         for i, (language, is_forced, is_hearing_impaired) in enumerate(zip(languages, forced, flag_hearing_impaired), start=1):
             if language not in language_codes:
                 continue
 
-            language_title = language_codes.get(language, language)  # Obter o título do idioma com base no language_codes
+            language_title = language_codes.get(language, language)
             if is_forced == "1":
                 language_title += " [FORCED]"
-            if is_hearing_impaired == "1":  # Verifica se é uma faixa "hearing impaired"
-                language_title += " [SDH]"  # Adiciona o termo " [SDH]" ao título do idioma
+            if is_hearing_impaired == "1":
+                language_title += " [SDH]"
 
-            command = ["mkvpropedit", mkv_file, f"--edit", f"track:{i+1}", f"--set", f"name={language_title}"]
-            result = subprocess.run(command)
+            command = ["mkvpropedit", mkv_file, f"--edit", f"track:{i + 1}", f"--set", f"name={language_title}"]
 
-            if result.returncode == 0:
-                print(f"Alterações em {mkv_file} com sucesso.")
-            else:
-                print(f"Ocorreu um erro ao processar o {mkv_file}.")
+            try:
+                result = subprocess.run(command, check=True)
+                print(f"Successfully updated {mkv_file}.")
+            except subprocess.CalledProcessError:
+                print(f"An error occurred while processing {mkv_file}.")
+
+        # Remove the encoding date using mkvpropedit
+        try:
+            date_removal_command = ["mkvpropedit", mkv_file, "--delete", "date"]
+            result = subprocess.run(date_removal_command, check=True)
+            print(f"Encoding date removed from {mkv_file}")
+        except subprocess.CalledProcessError:
+            print(f"Failed to remove encoding date from {mkv_file}.")
 
 
-
-
-if __name__ == "__main__":
-    directory = input("Por favor, insira o caminho do diretório que contém os arquivos MKV para serem analisados: ")
+def main():
+    directory = input("Please enter the path to the directory that contains the MKV files to analyze: ")
     if not os.path.isdir(directory):
-        print("O diretório informado não existe. Por favor, verifique o caminho e tente novamente.")
+        print("The specified directory does not exist. Please check the path and try again.")
         sys.exit(1)
 
+    create_temp_directory()
     mkv_files = get_mkv_files(directory)
     mkvmerge_files = create_mkvmerge_files(mkv_files)
     track_info = identify_tracks(mkvmerge_files)
     edit_mkv_files(mkv_files)
+
+
+if __name__ == "__main__":
+    main()
