@@ -28,8 +28,6 @@ Before using this script, make sure you have the following requirements:
 10. Progress and result messages will be displayed in the terminal throughout the process.
 [b]Note:[/b] Make sure to backup your MKV files before running the script, as it modifies the files directly.
 
-O progresso e os resultados das edições serão exibidos no console.
-
 ## Acknowledgements
 
 - This script utilizes the mkvmerge and mkvpropedit tools from the MKVToolNix package.
