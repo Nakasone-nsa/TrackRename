@@ -26,10 +26,10 @@ Before using this script, make sure you have the following requirements:
 8. Next, the script will modify the track names of the MKV files based on the extracted information using the mkvpropedit tool.
 9. Finally, the script will remove the encoding date from the MKV files using the mkvpropedit tool.
 10. Progress and result messages will be displayed in the terminal throughout the process.
-[b]Note:[/b] Make sure to backup your MKV files before running the script, as it modifies the files directly.
 
 ## Acknowledgements
 
 - This script utilizes the mkvmerge and mkvpropedit tools from the MKVToolNix package.
 - The language code mappings used in the script are based on the ISO 639-1 language codes.
+- Make sure to backup your MKV files before running the script, as it modifies the files directly
 
