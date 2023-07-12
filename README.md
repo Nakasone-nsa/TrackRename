@@ -1,37 +1,37 @@
-# Script de Edição de Faixas MKV
+## TrackRename
 
-Este script Python permite editar as faixas de arquivos MKV, alterando os títulos das faixas com base nas informações de idioma fornecidas. Ele utiliza as ferramentas `mkvmerge` e `mkvpropedit` para realizar as alterações nos arquivos MKV.
-
+This Python script allows you to analyze and edit MKV (Matroska Video) files. It performs various operations on MKV files, such as extracting track information and modifying track names based on language, forced status, and hearing impairment flag. Additionally, it removes the encoding date from the MKV files.
 
 https://github.com/Nakasone-nsa/TrackRename/assets/137841760/8509a9c4-4f78-4e88-baa4-e31d2ff3d093
 
-
-## Requisitos
-
+## Prerequisites
+Before using this script, make sure you have the following requirements:
 - Python 3.x
-- `mkvmerge` e `mkvpropedit` devem estar instalados no sistema e acessíveis pelo caminho (PATH)
+- 'mkvmerge' and 'mkvpropedit' command-line tools installed on your system. These tools are part of the MKVToolNix package, which can be downloaded from https://mkvtoolnix.download/.
 
-## Instalação
+## Installation
 
-1. Faça o download deste repositório em seu sistema.
-2. Certifique-se de que o Python 3.x esteja instalado em sua máquina.
-3. Certifique-se de que as ferramentas `mkvmerge` e `mkvpropedit` estejam instaladas e acessíveis pelo caminho (PATH) do sistema.
+1. Download the script directly
+2. Install 'mkvmerge' and 'mkvpropedit' command-line tools by downloading and installing the MKVToolNix package from https://mkvtoolnix.download/.
 
-O script irá percorrer recursivamente o diretório especificado e localizar todos os arquivos MKV. Em seguida, ele criará arquivos JSON usando o `mkvmerge` para extrair informações sobre as faixas de áudio e legenda dos arquivos MKV. As informações extraídas serão salvas na pasta "temp" dentro do diretório do script.
+##Usage
 
-Após a criação dos arquivos JSON, o script utilizará as informações para editar as faixas nos arquivos MKV. Os títulos das faixas serão alterados com base nas informações de idioma. Se uma faixa for marcada como "forced" (forçada), o título da faixa será alterado para "Forced". As alterações serão feitas usando a ferramenta `mkvpropedit`.
+1. Open a terminal or command prompt.
+2. Navigate to the directory where the script is located.
+3. Run the script using the following command: "py trackrename.py"
+4. You will be prompted to enter the path to the directory that contains the MKV files you want to analyze and edit. Provide the path and press Enter.
+5. The script will create a temporary directory (if it doesn't already exist) to store intermediate files.
+6. It will then analyze the MKV files, extract track information, and generate corresponding JSON files using the mkvmerge tool.
+7. The extracted track information will be stored in a file named "track_info.json" in the temporary directory.
+8. Next, the script will modify the track names of the MKV files based on the extracted information using the mkvpropedit tool.
+9. Finally, the script will remove the encoding date from the MKV files using the mkvpropedit tool.
+10. Progress and result messages will be displayed in the terminal throughout the process.
+[b]Note:[/b] Make sure to backup your MKV files before running the script, as it modifies the files directly.
 
 O progresso e os resultados das edições serão exibidos no console.
 
-## Estrutura do Projeto
+## Acknowledgements
 
-- `TrackRename.py`: O script principal que executa as ações de edição.
-- `temp/`: Pasta temporária onde os arquivos JSON e informações auxiliares são armazenados.
+- This script utilizes the mkvmerge and mkvpropedit tools from the MKVToolNix package.
+- The language code mappings used in the script are based on the ISO 639-1 language codes.
 
-## Observações
-
-- Certifique-se de fazer um backup dos seus arquivos MKV antes de executar o script, pois as alterações serão feitas diretamente nesses arquivos.
-- Verifique se as ferramentas `mkvmerge` e `mkvpropedit` estão instaladas corretamente e acessíveis pelo caminho (PATH) do sistema.
-- Certifique-se de que os arquivos MKV contenham faixas de áudio e/ou legendas para que as alterações sejam aplicadas corretamente.
-
-Divirta-se editando suas faixas MKV com facilidade! 😄🎬
